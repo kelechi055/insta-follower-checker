@@ -15,3 +15,29 @@ const fetchOptions = {
 };
 
 let username;
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+
+//  Making recursive API calls until all pages are loaded
+const concatFriendshipsApiResponse = async (list, userId, count, nextMaxId = "") => {
+  let url = `https://www.instagram.com/api/v1/friendships/${userId}/${list}/?count=${count}`;
+  if (nextMaxId) {
+    url += `&max_id=${nextMaxId}`;
+  }
+};
+
+const data = await fetch(url, fetchOptions).then(response => response.json());
+
+if (data.next_max_id) {
+  const sleepDuration = random(800, 1500);
+  console.log(`Loaded ${data.users.length} ${list}. Sleeping for ${sleepDuration}ms to avoid rate limiting.`);
+
+  await sleep(sleepDuration);
+
+  const nextPageUsers = await concatFriendshipsApiResponse(list, userId, count, data.next_max_id);
+  return data.users.concat(nextPageUsers);
+}
+
+return data.users;
+};
